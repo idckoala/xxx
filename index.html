@@ -3,55 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MovieHub</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>ตารางโปรแกรมฟุตบอล</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 1em;
+            text-align: center;
+        }
+
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        table th {
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <div class="logo">🎥 MovieHub</div>
-        <nav>
-            <ul>
-                <li><a href="#">หน้าแรก</a></li>
-                <li><a href="#">หมวดหมู่</a></li>
-                <li><a href="#">ค้นหา</a></li>
-                <li><a href="#">เข้าสู่ระบบ</a></li>
-            </ul>
-        </nav>
+        <h1>ตารางโปรแกรมฟุตบอล</h1>
     </header>
+    <main>
+        <table>
+            <thead>
+                <tr>
+                    <th>วันที่</th>
+                    <th>เวลา</th>
+                    <th>ทีมเหย้า</th>
+                    <th>ทีมเยือน</th>
+                    <th>ลีก</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- ตารางข้อมูล -->
+            </tbody>
+        </table>
+    </main>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const tableBody = document.querySelector("table tbody");
 
-    <section class="hero">
-        <div class="hero-content">
-            <h1>พบกับโลกของภาพยนตร์</h1>
-            <p>สำรวจหนังใหม่ หนังฮิต และหนังยอดนิยมได้ที่นี่</p>
-            <button class="cta-button">สำรวจเพิ่มเติม</button>
-        </div>
-    </section>
+            // API URL
+            const apiURL = "https://api.football-data.org/v4/matches";
+            const apiKey = "d9c01b31aca64728986e4ab1c41e3922"; // API Key
 
-    <section class="movies">
-        <h2>หนังใหม่ล่าสุด</h2>
-        <div class="movie-grid">
-            <div class="movie-item">
-                <img src="assets/images/movie1.jpg" alt="Movie 1">
-                <div class="movie-info">
-                    <h3>ชื่อหนัง 1</h3>
-                    <p>เรื่องย่อหนัง 1</p>
-                    <button class="watch-button">ดูหนัง</button>
-                </div>
-            </div>
-            <div class="movie-item">
-                <img src="assets/images/movie2.jpg" alt="Movie 2">
-                <div class="movie-info">
-                    <h3>ชื่อหนัง 2</h3>
-                    <p>เรื่องย่อหนัง 2</p>
-                    <button class="watch-button">ดูหนัง</button>
-                </div>
-            </div>
-        </div>
-    </section>
+            try {
+                // ดึงข้อมูลจาก API
+                const response = await fetch(apiURL, {
+                    headers: {
+                        "X-Auth-Token": apiKey
+                    }
+                });
 
-    <footer>
-        <p>© 2024 MovieHub. All rights reserved.</p>
-    </footer>
+                if (!response.ok) throw new Error("ไม่สามารถโหลดข้อมูลได้");
+
+                const data = await response.json();
+
+                // แสดงข้อมูลในตาราง
+                data.matches.forEach(match => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${new Date(match.utcDate).toLocaleDateString()}</td>
+                        <td>${new Date(match.utcDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
+                        <td>${match.homeTeam.name}</td>
+                        <td>${match.awayTeam.name}</td>
+                        <td>${match.competition.name}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                tableBody.innerHTML = `<tr><td colspan="5">ไม่สามารถโหลดข้อมูลได้</td></tr>`;
+            }
+        });
+    </script>
 </body>
 </html>
