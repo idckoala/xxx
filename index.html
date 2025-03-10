@@ -1,104 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ตารางโปรแกรมฟุตบอล</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f8f9fa;
-        }
+<html>
+ <head> 
+  <meta charset="utf-8"> 
+  <meta name="Keywords" content=""> 
+  <meta name="Description" content=""> 
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"> 
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"> 
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@3/dark.css"> 
+  <link href="https://fonts.googleapis.com/css?family=Mitr" rel="stylesheet"> 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> 
+  <style>
+body {
+height: auto;
+max-width: 100%;
+width: 100%;
 
-        header {
-            background-color: #007bff;
-            color: white;
-            padding: 1em;
-            text-align: center;
-        }
 
-        table {
-            width: 90%;
-            margin: 20px auto;
-            border-collapse: collapse;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
+background-color: #fff;
+font-family: 'Mitr';
+color: #000;
+}
+.text-r { 
+white-space: nowrap; 
+}
+#bgg{
+background-color: #FF6600;
+color: #fff;
+}
 
-        table th, table td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: center;
-        }
+#grad1 {
+max-height: 100%;
 
-        table th {
-            background-color: #f4f4f4;
-            color: #333;
-        }
-
-        table tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>ตารางโปรแกรมฟุตบอล</h1>
-    </header>
-    <main>
-        <table>
-            <thead>
-                <tr>
-                    <th>วันที่</th>
-                    <th>เวลา</th>
-                    <th>ทีมเหย้า</th>
-                    <th>ทีมเยือน</th>
-                    <th>ลีก</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- ตารางข้อมูล -->
-            </tbody>
-        </table>
-    </main>
-    <script>
-        document.addEventListener("DOMContentLoaded", async () => {
-            const tableBody = document.querySelector("table tbody");
-
-            // API URL
-            const apiURL = "https://api.football-data.org/v4/matches";
-            const apiKey = "d9c01b31aca64728986e4ab1c41e3922"; // API Key
-
-            try {
-                // ดึงข้อมูลจาก API
-                const response = await fetch(apiURL, {
-                    headers: {
-                        "X-Auth-Token": apiKey
-                    }
-                });
-
-                if (!response.ok) throw new Error("ไม่สามารถโหลดข้อมูลได้");
-
-                const data = await response.json();
-
-                // แสดงข้อมูลในตาราง
-                data.matches.forEach(match => {
-                    const row = document.createElement("tr");
-                    row.innerHTML = `
-                        <td>${new Date(match.utcDate).toLocaleDateString()}</td>
-                        <td>${new Date(match.utcDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
-                        <td>${match.homeTeam.name}</td>
-                        <td>${match.awayTeam.name}</td>
-                        <td>${match.competition.name}</td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-            } catch (error) {
-                console.error("Error fetching data:", error);
-                tableBody.innerHTML = `<tr><td colspan="5">ไม่สามารถโหลดข้อมูลได้</td></tr>`;
-            }
-        });
-    </script>
-</body>
+    height: 100%;
+    background: linear-gradient(#66FFFF,#00FF33);
+}
+</style> 
+ </head> 
+ <body id="grad1"> 
+  <title>Mobile App USER [  ]</title> 
+  <nav class="navbar navbar-light border-dark" id="bgg"> 
+   <div class="col text-center border-right border-dark"> 
+    <a href="index.php" class="text-light"> หน้าแรก </a> 
+   </div> 
+   <div class="col text-center border-left border-dark"> 
+    <a href="BTS1.php?app=prosim" class="text-light"> เข้าสู่ระบบ </a> 
+   </div> 
+  </nav> 
+  <div class="container" style="padding-top: 40"> 
+   <div class="card border-dark"> 
+    <center> 
+     <h6 class="ml-2 mt-1"> 18 บาท 💵 68 เพชร 💎<br> <br> 49 บาท 💵 172 เพชร 💎<br> <br> 99 บาท 💵 309 เพชร 💎<br> <br> 139 บาท 💵 481 เพชร 💎<br> <br> 149 บาท 💵 517 เพชร 💎<br> </h6> 
+    </center> 
+   </div> 
+  </div> 
+ </body>
 </html>
