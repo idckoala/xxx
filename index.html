@@ -1,57 +1,102 @@
-<html>
- <head> 
-  <meta charset="utf-8"> 
-  <meta name="Keywords" content=""> 
-  <meta name="Description" content=""> 
-  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"> 
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"> 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@3/dark.css"> 
-  <link href="https://fonts.googleapis.com/css?family=Mitr" rel="stylesheet"> 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> 
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ส่ง SMS</title>
   <style>
-body {
-height: auto;
-max-width: 100%;
-width: 100%;
+    body {
+      font-family: 'Kanit', sans-serif;
+      background-color: #f2f6fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background-color: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 400px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 2px solid #b8d2e6;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      background-color: #3399dd;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 14px;
+      color: green;
+    }
+  </style>
+</head>
+<body>
 
+  <div class="container">
+    <h2>ส่ง <strong>SMS</strong></h2>
 
-background-color: #fff;
-font-family: 'Mitr';
-color: #000;
-}
-.text-r { 
-white-space: nowrap; 
-}
-#bgg{
-background-color: #FF6600;
-color: #fff;
-}
+    <label>เบอร์โทรศัพท์ :</label>
+    <input type="text" id="phone" placeholder="กรอกเบอร์โทรศัพท์">
 
-#grad1 {
-max-height: 100%;
+    <label>ข้อความ:</label>
+    <input type="text" id="message" placeholder="ข้อความที่ต้องการส่ง">
 
-    height: 100%;
-    background: linear-gradient(#66FFFF,#00FF33);
-}
-</style> 
- </head> 
- <body id="grad1"> 
-  <title>Mobile App USER [  ]</title> 
-  <nav class="navbar navbar-light border-dark" id="bgg"> 
-   <div class="col text-center border-right border-dark"> 
-    <a href="index.php" class="text-light"> หน้าแรก </a> 
-   </div> 
-   <div class="col text-center border-left border-dark"> 
-    <a href="BTS1.php?app=prosim" class="text-light"> เข้าสู่ระบบ </a> 
-   </div> 
-  </nav> 
-  <div class="container" style="padding-top: 40"> 
-   <div class="card border-dark"> 
-    <center> 
-     <h6 class="ml-2 mt-1"> 18 บาท 💵 68 เพชร 💎<br> <br> 49 บาท 💵 172 เพชร 💎<br> <br> 99 บาท 💵 309 เพชร 💎<br> <br> 139 บาท 💵 481 เพชร 💎<br> <br> 149 บาท 💵 517 เพชร 💎<br> </h6> 
-    </center> 
-   </div> 
-  </div> 
- </body>
+    <button onclick="sendSMS()">ส่ง SMS</button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    async function sendSMS() {
+      const phone = document.getElementById('phone').value;
+      const message = document.getElementById('message').value;
+      const resBox = document.getElementById('result');
+      resBox.textContent = "⏳ กำลังส่ง...";
+
+      const formData = new FormData();
+      formData.append('phone', phone);
+      formData.append('message', message);
+
+      try {
+        const response = await fetch('send.php', {
+          method: 'POST',
+          body: formData
+        });
+
+        const text = await response.text();
+        resBox.textContent = text;
+      } catch (error) {
+        resBox.textContent = "❌ เกิดข้อผิดพลาด: " + error.message;
+      }
+    }
+  </script>
+
+</body>
 </html>
