@@ -1,102 +1,114 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ส่ง SMS</title>
-  <style>
-    body {
-      font-family: 'Kanit', sans-serif;
-      background-color: #f2f6fa;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-    .container {
-      background-color: white;
-      border-radius: 12px;
-      padding: 30px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      width: 90%;
-      max-width: 400px;
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 25px;
-    }
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: bold;
-    }
-    input[type="text"] {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 20px;
-      border: 2px solid #b8d2e6;
-      border-radius: 6px;
-      font-size: 16px;
-    }
-    button {
-      width: 100%;
-      padding: 14px;
-      background-color: #3399dd;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    .result {
-      margin-top: 15px;
-      text-align: center;
-      font-size: 14px;
-      color: green;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌸 Anime Online Monitor</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body{
+  min-height:100vh;
+  background:
+    radial-gradient(circle at top, rgba(255,182,193,.35), transparent 40%),
+    linear-gradient(135deg,#6a11cb,#2575fc,#ff9a9e);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.glass{
+  background:rgba(255,255,255,.18);
+  backdrop-filter:blur(18px);
+  border:1px solid rgba(255,255,255,.3);
+  box-shadow:0 0 25px rgba(255,105,180,.25);
+}
+
+.glow{
+  box-shadow:0 0 15px rgba(0,255,255,.6);
+}
+
+.avatar{
+  width:42px;
+  height:42px;
+  border-radius:9999px;
+  background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
+}
+</style>
 </head>
-<body>
 
-  <div class="container">
-    <h2>ส่ง <strong>SMS</strong></h2>
+<body class="p-4 text-white">
 
-    <label>เบอร์โทรศัพท์ :</label>
-    <input type="text" id="phone" placeholder="กรอกเบอร์โทรศัพท์">
+<h1 class="text-3xl font-extrabold text-center mb-6 drop-shadow-lg">
+  🌸 Anime VPN – Online Monitor
+</h1>
 
-    <label>ข้อความ:</label>
-    <input type="text" id="message" placeholder="ข้อความที่ต้องการส่ง">
+<div id="servers" class="grid gap-5 md:grid-cols-2"></div>
 
-    <button onclick="sendSMS()">ส่ง SMS</button>
+<script>
+const servers = [
+  { name:"TH2", url:"http://82.26.104.151:5555/server/online_app.json" },
+  { name:"TH3", url:"http://82.26.104.196:5555/server/online_app.json" },
+  { name:"TH4", url:"http://82.26.104.197:5555/server/online_app.json" },
+  { name:"TH5", url:"http://82.26.104.199:5555/server/online_app.json" }
+];
 
-    <div class="result" id="result"></div>
-  </div>
+async function loadData(){
+  const box = document.getElementById("servers");
+  box.innerHTML = "";
 
-  <script>
-    async function sendSMS() {
-      const phone = document.getElementById('phone').value;
-      const message = document.getElementById('message').value;
-      const resBox = document.getElementById('result');
-      resBox.textContent = "⏳ กำลังส่ง...";
+  for(const s of servers){
+    try{
+      const r = await fetch(s.url);
+      const d = await r.json();
 
-      const formData = new FormData();
-      formData.append('phone', phone);
-      formData.append('message', message);
+      const users = d.users || d.online || [];
+      const total = Array.isArray(users) ? users.length : d.total || 0;
 
-      try {
-        const response = await fetch('send.php', {
-          method: 'POST',
-          body: formData
-        });
+      box.innerHTML += `
+      <div class="glass rounded-2xl p-5 transition hover:scale-[1.02]">
+        <div class="flex justify-between items-center mb-3">
+          <h2 class="text-xl font-bold">🟢 ${s.name}</h2>
+          <span class="px-3 py-1 rounded-full bg-green-400/20 text-green-200 glow">
+            ${total} Online
+          </span>
+        </div>
 
-        const text = await response.text();
-        resBox.textContent = text;
-      } catch (error) {
-        resBox.textContent = "❌ เกิดข้อผิดพลาด: " + error.message;
-      }
+        <div class="space-y-2 max-h-40 overflow-auto text-sm">
+          ${
+            users.length
+            ? users.map(u=>`
+              <div class="flex items-center gap-2">
+                <div class="avatar">${u[0] ?? "U"}</div>
+                <span>${u}</span>
+              </div>
+            `).join("")
+            : `<p class="opacity-70">ไม่มีผู้ใช้งาน</p>`
+          }
+        </div>
+      </div>
+      `;
+    }catch{
+      box.innerHTML += `
+      <div class="glass rounded-2xl p-5 border border-red-400">
+        <h2 class="text-xl font-bold">🔴 ${s.name}</h2>
+        <p class="opacity-80">ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์</p>
+      </div>
+      `;
     }
-  </script>
+  }
+}
+
+loadData();
+setInterval(loadData,10000);
+</script>
+
+<footer class="text-center text-xs opacity-70 mt-6">
+  ✨ Anime Online System • Auto Refresh 10s
+</footer>
 
 </body>
 </html>
