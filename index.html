@@ -3,73 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⚔️ Anime VPN Online System</title>
+<title>🌸 Anime Online Monitor</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
-/* 🌌 Background Animation */
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
+body{
+  min-height:100vh;
   background:
-    radial-gradient(circle at 20% 20%, rgba(0,255,255,.25), transparent 40%),
-    radial-gradient(circle at 80% 30%, rgba(255,0,255,.25), transparent 45%),
-    radial-gradient(circle at 50% 80%, rgba(255,255,255,.15), transparent 40%),
-    linear-gradient(135deg,#050b2e,#140c3c,#2a0f45);
-  animation: moveBG 12s infinite alternate;
-  z-index:-2;
+    radial-gradient(circle at top, rgba(255,182,193,.35), transparent 40%),
+    linear-gradient(135deg,#6a11cb,#2575fc,#ff9a9e);
+  font-family: 'Segoe UI', sans-serif;
 }
 
-@keyframes moveBG{
-  0%{filter:hue-rotate(0deg)}
-  100%{filter:hue-rotate(45deg)}
-}
-
-/* 💎 Glass Card */
 .glass{
-  background:rgba(255,255,255,.12);
-  backdrop-filter:blur(25px);
-  border:1px solid rgba(255,255,255,.35);
-  box-shadow:
-    0 0 40px rgba(0,255,255,.25),
-    inset 0 0 20px rgba(255,255,255,.15);
+  background:rgba(255,255,255,.18);
+  backdrop-filter:blur(18px);
+  border:1px solid rgba(255,255,255,.3);
+  box-shadow:0 0 25px rgba(255,105,180,.25);
 }
 
-/* ⚡ Neon */
-.neon{
-  text-shadow:
-    0 0 5px #0ff,
-    0 0 15px #0ff,
-    0 0 30px #0ff;
-}
-
-.server-card{
-  position:relative;
-  overflow:hidden;
-}
-
-.server-card::after{
-  content:"";
-  position:absolute;
-  inset:-2px;
-  background:linear-gradient(120deg,transparent,rgba(0,255,255,.8),transparent);
-  opacity:.4;
-  animation: scan 4s infinite;
-}
-
-@keyframes scan{
-  from{transform:translateX(-100%)}
-  to{transform:translateX(100%)}
+.glow{
+  box-shadow:0 0 15px rgba(0,255,255,.6);
 }
 
 .avatar{
-  width:38px;
-  height:38px;
+  width:42px;
+  height:42px;
   border-radius:9999px;
-  background:linear-gradient(135deg,#00f2ff,#ff00c8);
-  box-shadow:0 0 15px rgba(0,255,255,.8);
+  background:linear-gradient(135deg,#ff9a9e,#fad0c4);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -78,69 +40,74 @@ body::before{
 </style>
 </head>
 
-<body class="min-h-screen p-4 text-white">
+<body class="p-4 text-white">
 
-<h1 class="text-4xl font-black text-center mb-8 neon">
-  ⚔️ ANIME VPN ONLINE SYSTEM
+<h1 class="text-3xl font-extrabold text-center mb-6 drop-shadow-lg">
+  🌸 Anime VPN – Online Monitor
 </h1>
 
-<div id="servers" class="grid gap-6 md:grid-cols-2"></div>
+<div id="servers" class="grid gap-5 md:grid-cols-2"></div>
 
 <script>
 const servers = [
- {name:"TH2",url:"http://82.26.104.151:5555/server/online_app.json"},
- {name:"TH3",url:"http://82.26.104.196:5555/server/online_app.json"},
- {name:"TH4",url:"http://82.26.104.197:5555/server/online_app.json"},
- {name:"TH5",url:"http://82.26.104.199:5555/server/online_app.json"}
+  { name:"TH2", url:"http://82.26.104.151:5555/server/online_app.json" },
+  { name:"TH3", url:"http://82.26.104.196:5555/server/online_app.json" },
+  { name:"TH4", url:"http://82.26.104.197:5555/server/online_app.json" },
+  { name:"TH5", url:"http://82.26.104.199:5555/server/online_app.json" }
 ];
 
-async function load(){
- const el=document.getElementById("servers");
- el.innerHTML="";
- for(const s of servers){
-  try{
-   const r=await fetch(s.url);
-   const d=await r.json();
-   const users=d.users||d.online||[];
-   const total=Array.isArray(users)?users.length:d.total||0;
+async function loadData(){
+  const box = document.getElementById("servers");
+  box.innerHTML = "";
 
-   el.innerHTML+=`
-   <div class="glass server-card rounded-2xl p-6 hover:scale-[1.03] transition">
-     <div class="flex justify-between items-center mb-4">
-       <h2 class="text-2xl font-extrabold neon">🟢 ${s.name}</h2>
-       <span class="px-4 py-1 rounded-full bg-cyan-400/20 text-cyan-200 neon">
-         ${total} ONLINE
-       </span>
-     </div>
+  for(const s of servers){
+    try{
+      const r = await fetch(s.url);
+      const d = await r.json();
 
-     <div class="space-y-2 max-h-44 overflow-auto text-sm">
-       ${
-        users.length
-        ? users.map(u=>`
-          <div class="flex items-center gap-3">
-            <div class="avatar">${u[0]??"U"}</div>
-            <span>${u}</span>
-          </div>
-        `).join("")
-        : `<p class="opacity-70">NO USER CONNECTED</p>`
-       }
-     </div>
-   </div>`;
-  }catch{
-   el.innerHTML+=`
-   <div class="glass rounded-2xl p-6 border border-red-400">
-     <h2 class="text-xl font-bold">🔴 ${s.name}</h2>
-     <p>SERVER OFFLINE</p>
-   </div>`;
+      const users = d.users || d.online || [];
+      const total = Array.isArray(users) ? users.length : d.total || 0;
+
+      box.innerHTML += `
+      <div class="glass rounded-2xl p-5 transition hover:scale-[1.02]">
+        <div class="flex justify-between items-center mb-3">
+          <h2 class="text-xl font-bold">🟢 ${s.name}</h2>
+          <span class="px-3 py-1 rounded-full bg-green-400/20 text-green-200 glow">
+            ${total} Online
+          </span>
+        </div>
+
+        <div class="space-y-2 max-h-40 overflow-auto text-sm">
+          ${
+            users.length
+            ? users.map(u=>`
+              <div class="flex items-center gap-2">
+                <div class="avatar">${u[0] ?? "U"}</div>
+                <span>${u}</span>
+              </div>
+            `).join("")
+            : `<p class="opacity-70">ไม่มีผู้ใช้งาน</p>`
+          }
+        </div>
+      </div>
+      `;
+    }catch{
+      box.innerHTML += `
+      <div class="glass rounded-2xl p-5 border border-red-400">
+        <h2 class="text-xl font-bold">🔴 ${s.name}</h2>
+        <p class="opacity-80">ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์</p>
+      </div>
+      `;
+    }
   }
- }
 }
-load();
-setInterval(load,10000);
+
+loadData();
+setInterval(loadData,10000);
 </script>
 
-<footer class="text-center text-xs opacity-60 mt-8">
-  ⚡ Anime Cyber System • Auto Refresh 10s
+<footer class="text-center text-xs opacity-70 mt-6">
+  ✨ Anime Online System • Auto Refresh 10s
 </footer>
 
 </body>
