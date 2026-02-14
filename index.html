@@ -1,102 +1,147 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ส่ง SMS</title>
-  <style>
-    body {
-      font-family: 'Kanit', sans-serif;
-      background-color: #f2f6fa;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-    .container {
-      background-color: white;
-      border-radius: 12px;
-      padding: 30px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      width: 90%;
-      max-width: 400px;
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 25px;
-    }
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: bold;
-    }
-    input[type="text"] {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 20px;
-      border: 2px solid #b8d2e6;
-      border-radius: 6px;
-      font-size: 16px;
-    }
-    button {
-      width: 100%;
-      padding: 14px;
-      background-color: #3399dd;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    .result {
-      margin-top: 15px;
-      text-align: center;
-      font-size: 14px;
-      color: green;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚔️ Anime VPN Online System</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+/* 🌌 Background Animation */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(0,255,255,.25), transparent 40%),
+    radial-gradient(circle at 80% 30%, rgba(255,0,255,.25), transparent 45%),
+    radial-gradient(circle at 50% 80%, rgba(255,255,255,.15), transparent 40%),
+    linear-gradient(135deg,#050b2e,#140c3c,#2a0f45);
+  animation: moveBG 12s infinite alternate;
+  z-index:-2;
+}
+
+@keyframes moveBG{
+  0%{filter:hue-rotate(0deg)}
+  100%{filter:hue-rotate(45deg)}
+}
+
+/* 💎 Glass Card */
+.glass{
+  background:rgba(255,255,255,.12);
+  backdrop-filter:blur(25px);
+  border:1px solid rgba(255,255,255,.35);
+  box-shadow:
+    0 0 40px rgba(0,255,255,.25),
+    inset 0 0 20px rgba(255,255,255,.15);
+}
+
+/* ⚡ Neon */
+.neon{
+  text-shadow:
+    0 0 5px #0ff,
+    0 0 15px #0ff,
+    0 0 30px #0ff;
+}
+
+.server-card{
+  position:relative;
+  overflow:hidden;
+}
+
+.server-card::after{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  background:linear-gradient(120deg,transparent,rgba(0,255,255,.8),transparent);
+  opacity:.4;
+  animation: scan 4s infinite;
+}
+
+@keyframes scan{
+  from{transform:translateX(-100%)}
+  to{transform:translateX(100%)}
+}
+
+.avatar{
+  width:38px;
+  height:38px;
+  border-radius:9999px;
+  background:linear-gradient(135deg,#00f2ff,#ff00c8);
+  box-shadow:0 0 15px rgba(0,255,255,.8);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
+}
+</style>
 </head>
-<body>
 
-  <div class="container">
-    <h2>ส่ง <strong>SMS</strong></h2>
+<body class="min-h-screen p-4 text-white">
 
-    <label>เบอร์โทรศัพท์ :</label>
-    <input type="text" id="phone" placeholder="กรอกเบอร์โทรศัพท์">
+<h1 class="text-4xl font-black text-center mb-8 neon">
+  ⚔️ ANIME VPN ONLINE SYSTEM
+</h1>
 
-    <label>ข้อความ:</label>
-    <input type="text" id="message" placeholder="ข้อความที่ต้องการส่ง">
+<div id="servers" class="grid gap-6 md:grid-cols-2"></div>
 
-    <button onclick="sendSMS()">ส่ง SMS</button>
+<script>
+const servers = [
+ {name:"TH2",url:"http://82.26.104.151:5555/server/online_app.json"},
+ {name:"TH3",url:"http://82.26.104.196:5555/server/online_app.json"},
+ {name:"TH4",url:"http://82.26.104.197:5555/server/online_app.json"},
+ {name:"TH5",url:"http://82.26.104.199:5555/server/online_app.json"}
+];
 
-    <div class="result" id="result"></div>
-  </div>
+async function load(){
+ const el=document.getElementById("servers");
+ el.innerHTML="";
+ for(const s of servers){
+  try{
+   const r=await fetch(s.url);
+   const d=await r.json();
+   const users=d.users||d.online||[];
+   const total=Array.isArray(users)?users.length:d.total||0;
 
-  <script>
-    async function sendSMS() {
-      const phone = document.getElementById('phone').value;
-      const message = document.getElementById('message').value;
-      const resBox = document.getElementById('result');
-      resBox.textContent = "⏳ กำลังส่ง...";
+   el.innerHTML+=`
+   <div class="glass server-card rounded-2xl p-6 hover:scale-[1.03] transition">
+     <div class="flex justify-between items-center mb-4">
+       <h2 class="text-2xl font-extrabold neon">🟢 ${s.name}</h2>
+       <span class="px-4 py-1 rounded-full bg-cyan-400/20 text-cyan-200 neon">
+         ${total} ONLINE
+       </span>
+     </div>
 
-      const formData = new FormData();
-      formData.append('phone', phone);
-      formData.append('message', message);
+     <div class="space-y-2 max-h-44 overflow-auto text-sm">
+       ${
+        users.length
+        ? users.map(u=>`
+          <div class="flex items-center gap-3">
+            <div class="avatar">${u[0]??"U"}</div>
+            <span>${u}</span>
+          </div>
+        `).join("")
+        : `<p class="opacity-70">NO USER CONNECTED</p>`
+       }
+     </div>
+   </div>`;
+  }catch{
+   el.innerHTML+=`
+   <div class="glass rounded-2xl p-6 border border-red-400">
+     <h2 class="text-xl font-bold">🔴 ${s.name}</h2>
+     <p>SERVER OFFLINE</p>
+   </div>`;
+  }
+ }
+}
+load();
+setInterval(load,10000);
+</script>
 
-      try {
-        const response = await fetch('send.php', {
-          method: 'POST',
-          body: formData
-        });
-
-        const text = await response.text();
-        resBox.textContent = text;
-      } catch (error) {
-        resBox.textContent = "❌ เกิดข้อผิดพลาด: " + error.message;
-      }
-    }
-  </script>
+<footer class="text-center text-xs opacity-60 mt-8">
+  ⚡ Anime Cyber System • Auto Refresh 10s
+</footer>
 
 </body>
 </html>
