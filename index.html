@@ -3,146 +3,189 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Server Online</title>
+<title>Server Status Energy</title>
 
 <style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,sans-serif}
+
 body{
-    margin:0;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    background:linear-gradient(135deg,#dbeafe,#f8fafc);
-    min-height:100vh;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:radial-gradient(circle at center,#0f172a,#020617);
+  color:white;
 }
-.bg-blur{
-    position:fixed;
-    width:300px;height:300px;
-    background:radial-gradient(circle,#60a5fa,transparent 70%);
-    top:-80px;right:-80px;
-    filter:blur(60px);opacity:.6;
-}
-.container{
-    max-width:420px;
-    margin:auto;
-    padding:16px;
-    position:relative;
-    z-index:2;
-}
-.header{text-align:center;margin-bottom:16px}
-.total{
-    background:rgba(255,255,255,.85);
-    padding:12px;
-    border-radius:14px;
-    text-align:center;
-    margin-bottom:16px;
-}
+
+/* การ์ดเล็กลง */
 .card{
-    background:rgba(255,255,255,.9);
-    border-radius:18px;
-    padding:16px;
-    margin-bottom:14px;
+  position:relative;
+  width:100%;
+  max-width:330px;
+  padding:20px;
+  border-radius:20px;
+  background:#050c1f;
+  overflow:hidden;
+  box-shadow:0 0 30px rgba(0,255,255,0.25);
 }
-.card-header{
-    display:flex;
-    justify-content:space-between;
+
+/* เส้นพลังงานวิ่งรอบ */
+.card::before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  border-radius:22px;
+  background:linear-gradient(90deg,transparent,#00f0ff,transparent);
+  animation:borderRun 3s linear infinite;
 }
-.server-name{
-    font-size:18px;
-    font-weight:600;
-    display:flex;
-    gap:8px;
-    align-items:center;
+
+@keyframes borderRun{
+  0%{transform:rotate(0deg)}
+  100%{transform:rotate(360deg)}
 }
-.dot{
-    width:10px;height:10px;
-    background:#22c55e;border-radius:50%;
+
+.card::after{
+  content:"";
+  position:absolute;
+  inset:2px;
+  border-radius:18px;
+  background:#050c1f;
 }
-.progress{
-    height:8px;
-    background:#e5e7eb;
-    border-radius:10px;
-    margin:10px 0;
+
+/* เนื้อหา */
+.content{
+  position:relative;
+  z-index:2;
 }
-.progress-bar{
-    height:100%;
-    width:0%;
-    background:linear-gradient(90deg,#22c55e,#4ade80);
-    transition:.3s;
+
+.title{
+  text-align:center;
+  font-size:18px;
+  margin-bottom:5px;
 }
-.status{font-size:13px;color:#666}
-.offline .dot,
-.offline .progress-bar{
-    background:#ef4444;
+
+.total{
+  text-align:center;
+  font-size:26px;
+  font-weight:bold;
+  margin-bottom:15px;
+  color:#00f0ff;
+  text-shadow:0 0 10px #00f0ff;
+  transition:transform 0.3s;
+}
+
+.server{
+  margin-bottom:10px;
+}
+
+.row{
+  display:flex;
+  justify-content:space-between;
+  font-size:14px;
+  margin-bottom:4px;
+}
+
+.value{
+  color:#22c55e;
+  font-weight:bold;
+}
+
+.bar{
+  height:5px;
+  background:#111827;
+  border-radius:10px;
+  overflow:hidden;
+}
+
+.fill{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#00f0ff,#22c55e);
+  box-shadow:0 0 8px #00f0ff;
+  transition:width 0.5s ease;
+}
+
+/* เอฟเฟกต์สแกน */
+.scan{
+  position:absolute;
+  width:100%;
+  height:3px;
+  background:linear-gradient(90deg,transparent,#00f0ff,transparent);
+  animation:scanMove 3s linear infinite;
+  opacity:0.4;
+}
+
+@keyframes scanMove{
+  0%{top:0%}
+  100%{top:100%}
 }
 </style>
 </head>
 
 <body>
-<div class="bg-blur"></div>
 
-<div class="container">
-    <div class="header">
-        <h1>Server Online</h1>
-        <div id="updateTime">อัปเดตล่าสุด: -</div>
-    </div>
-
-    <div class="total">
-        รวมทั้งหมด: <b id="total">0</b> คน
-    </div>
-
+<div class="card">
+  <div class="scan"></div>
+  <div class="content">
+    <div class="title">📡 Server ว่าง</div>
+    <div class="total" id="total">กำลังโหลด...</div>
     <div id="servers"></div>
+  </div>
 </div>
 
 <script>
 const MAX = 500;
+
 const servers = [
- {name:"TH1",url:"http://45.144.167.176:8888/server/online"},
- {name:"TH2",url:"http://82.26.104.151:8888/server/online"},
- {name:"TH3",url:"http://82.26.104.196:8888/server/online"},
- {name:"TH4",url:"http://82.26.104.197:8888/server/online"},
- {name:"TH5",url:"http://82.26.104.199:8888/server/online"}
+  {name:"Server 1", url:"http://45.144.167.176:8888/server/online"},
+  {name:"Server 2", url:"http://103.114.201.136:8888/server/online"},
+  {name:"Server 3", url:"http://103.114.201.151:8888/server/online"},
+  {name:"Server 4", url:"http://45.136.255.7:8888/server/online"},
+  {name:"Server 5", url:"http://45.144.167.176:81/server/online.json"}
 ];
 
-const box = document.getElementById("servers");
+async function update(){
+  let total = 0;
+  const container = document.getElementById("servers");
+  container.innerHTML = "";
 
-servers.forEach((s,i)=>{
- box.innerHTML+=`
- <div class="card" id="card-${i}">
-   <div class="card-header">
-     <div class="server-name"><span class="dot"></span>${s.name}</div>
-     <div id="count-${i}">0/${MAX}</div>
-   </div>
-   <div class="progress"><div class="progress-bar" id="bar-${i}"></div></div>
-   <div class="status" id="status-${i}">กำลังตรวจสอบ...</div>
- </div>`;
-});
+  for(let s of servers){
+    let value = 0;
+    try{
+      const res = await fetch(s.url);
+      let text = await res.text();
+      value = parseInt(text);
+      if(isNaN(value)) value = 0;
+      if(value > MAX) value = MAX;
+    }catch{
+      value = 0;
+    }
 
-async function loadData(){
- let total=0;
+    total += value;
+    const percent = (value/MAX)*100;
 
- await Promise.all(
-   servers.map(async (s,i)=>{
-     try{
-       const r=await fetch("proxy.php?url="+encodeURIComponent(s.url));
-       const v=parseInt(await r.text())||0;
+    container.innerHTML += `
+      <div class="server">
+        <div class="row">
+          <span>${s.name}</span>
+          <span class="value">${value} คน</span>
+        </div>
+        <div class="bar">
+          <div class="fill" style="width:${percent}%"></div>
+        </div>
+      </div>
+    `;
+  }
 
-       total+=v;
-       document.getElementById(`count-${i}`).innerText=`${v}/${MAX}`;
-       document.getElementById(`bar-${i}`).style.width=(v/MAX*100)+"%";
-       document.getElementById(`status-${i}`).innerText="ออนไลน์";
-       document.getElementById(`card-${i}`).classList.remove("offline");
-     }catch{
-       document.getElementById(`status-${i}`).innerText="ออฟไลน์";
-       document.getElementById(`card-${i}`).classList.add("offline");
-     }
-   })
- );
-
- document.getElementById("total").innerText=total;
- document.getElementById("updateTime").innerText=
-   "อัปเดตล่าสุด: "+new Date().toLocaleTimeString("th-TH");
+  const totalEl = document.getElementById("total");
+  totalEl.innerText = total + " คน";
+  totalEl.style.transform = "scale(1.1)";
+  setTimeout(()=> totalEl.style.transform="scale(1)",300);
 }
 
-loadData();
-setInterval(loadData,10000);
+update();
+setInterval(update,10000);
 </script>
+
 </body>
 </html>
